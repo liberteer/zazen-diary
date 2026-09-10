@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Za Zen is born — ZA ZEN Dev Diary</title>
+<style>
+  :root{
+    --bg:#fafaf9; --surface:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --accent:#4f7a56; --border:#e5e5e0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text); display:flex; justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:32px 16px 80px;
+  }
+  main{max-width:640px; width:100%;}
+  .back{display:inline-block; font-size:13px; color:var(--accent); font-weight:600; text-decoration:none; margin-bottom:24px;}
+  .entry-date{font-size:12px; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; font-weight:600;}
+  .entry-title{font-size:22px; font-weight:700; margin:6px 0 24px;}
+  h2{font-size:17px; font-weight:700; margin:32px 0 12px;}
+  p{font-size:14px; color:var(--text); margin:0 0 14px;}
+  ul{margin:0 0 14px; padding-left:20px;}
+  li{font-size:14px; color:var(--text); margin-bottom:6px;}
+  a{color:var(--accent);}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../index.html">← Back to diary</a>
+  <div class="entry-date">September 9, 2026</div>
+  <div class="entry-title">Za Zen is born</div>
+
+  <p>I started dabbling with meditation in January 2017, as far as I can remember. My first choice was, of course, Insight Timer, which was excellent for what I needed. As the years went by, I realized I was becoming dissatisfied with what Insight Timer had become. They became, first and foremost, a social-media-style marketplace. It's hard to pinpoint exactly, but it felt like everything was fighting for my attention, and the one thing I actually needed (aside from the timer itself, credit where it's due, they do let you set the timer as your first screen when you open the app) was buried under all the bells and whistles.</p>
+
+  <p>So I thought to myself: how about I sketch out what I'd actually want from a meditation app. This is what I wrote:</p>
+
+  <ul>
+    <li>I want it to be light and private. I don't have the need to brag about my meditation.</li>
+    <li>Minimal in terms of features, but polished enough to actually work well.</li>
+  </ul>
+
+  <p>That's how ZA ZEN was born, and this is the beginning of my chronicles of this creation journey.</p>
+
+  <h2>How to do it?</h2>
+
+  <p>Before I get slightly technical here (hoping you won't lose your mind whether you're pro- or anti-AI), let me tell you about my level of tech knowledge. I'm 40, an ex-journalist, now working at a tech company doing tasks that are mainly in the same vein as what I used to do back when I was a journalist. I'm surrounded by excellent engineers, though, and I always pick their brains, either for work or for my own personal stuff, so I'm in the fortunate position of actually learning a lot from them.</p>
+
+  <p>I've been tech-curious my whole life, because I always needed to make something work: my WordPress page, early HTML versions of a portal, a streaming server for a radio station. There was always something pulling me toward technology and learning, and I think my brain is just wired that way, not to be afraid of it.</p>
+
+  <p>After a few attempts at building my personal website on platforms of dubious quality, I turned to LLMs, mostly out of curiosity. My rule was this: I don't want to automate everything; I want an interactive tutorial, going back and forth with the machine, so I can learn stuff.</p>
+
+  <p>So it taught me the basics of GitHub, of working with Netlify, and a bunch of other stuff. That's how arnelsaric.com was born.</p>
+
+  <p>Since that worked, I wanted to do it again, but also make Za Zen installable as a Progressive Web App, the same way my Mastodon account and a few other sites I use already work on Android.</p>
+
+  <p>So how do I actually do this? It's human-in-the-loop, semi-automatic coding, or whatever you want to call it. I'm pretty sure it would take me years to get here on my own, through tutorials and trial and error, the way the old-school folks did it, and I have a lot of respect for that generation; they laid the foundation that lets me play with these tools today.</p>
+
+  <p>I'll keep this part short, since I don't think this is the place to get into my take on the pro- or anti-AI debate.</p>
+
+  <p>I'm pro-technology, pro-experiment, pro-interactive-learning, and pro-gress. I'm anti-tech-bro, anti- the current AI solutions that are causing real problems for nature, and anti-putting AI into everything.</p>
+
+  <p>Call me a hypocrite, scream your lungs out; I really don't care. I've drawn a very visible line for myself on where I will and won't use AI, but that's a story for another time.</p>
+
+  <h2>Why Za Zen?</h2>
+
+  <p>The term zazen refers to Zen sitting meditation. Split the word in two, and you get "za zen", which means "for Zen" in Bosnian/Croatian/Serbian, a nice little play on words.</p>
+
+  <p>I thought about what I actually need in the app: a timer, of course, easy to set up for both timed and unlimited meditation. Stats, because I also wanted to import Insight Timer CSV data, which Insight Timer luckily lets you export.</p>
+
+  <p>I also added "test" achievements and streaks. Why "test"? Zen isn't about attaining anything; it's about doing shikantaza: just sitting. So you can turn these off and just sit. But of course, people today like to gamify things, and I wanted something to motivate people too, since I want to offer this completely free of charge: no ads, nothing, for anyone who wants to try it. If you hide them, they keep tracking in the background anyway, so if you decide to turn them on later, everything will already be there.</p>
+
+  <p>My first big obstacle was triggering the sounds. The app has three sounds: a confirmation raindrop, a bell for the beginning and end of a sit, and an achievement-unlock bell. The main problem was making sure the app recognized the actual start of meditation, not the start of the optional preparation countdown, but the moment preparation ends.</p>
+
+  <p>Achievements were bland at first, so I gave them a spin by hiding them like mystery boxes. When you unlock one, you get a small dopamine hit from clicking on the mystery box with its unlocked padlock icon. By the third or fourth iteration, I made the unlocked padlocks tilt slightly and pulse. Kudos to my wife, who's a designer, for noticing that page needed something different.</p>
+
+  <p>As for colors, I read a few research papers on color psychology in wellness apps, and between a blue and green variant, I chose green because I wanted it to look natural.</p>
+
+  <p>The first version of the design was all buttons, kind of reminded me of those old Android 4 apps. One of them was an excellent meditation timer. I don't remember its name, but it had these flat grey buttons, and I loved the bell.</p>
+
+  <p>I decided to modernize the concept by making two sliders, one for time and another for preparation. I'm not totally sure I like that solution, but it looks better. I do like that the unlimited-time option sits at the end of the dial. The dial, by the way, is inspired by the ensō I have tattooed on my arm, a calligraphy symbol well known in Zen Buddhism. I'm pretty sure this design isn't final; I'd really like to work the ensō into the app itself more and make it "less balanced," more "imperfect," but for now, this is it.</p>
+
+  <p>Almost every aspect of Za Zen is inspired by the simplicity of Zen Buddhism, which I'm learning about as a pretty inactive member of <a href="https://www.treeleaf.org" target="_blank" rel="noopener">Treeleaf Sangha</a>, an excellent online sangha. If you don't have a Zen temple nearby, you can join Treeleaf too.</p>
+
+  <p>The minimalist approach of their forum ("rules" for making posts with as few words as possible, and a "requirement" to do daily sitting before posting on forum) inspired the app in its own way, alongside the actual zen teachings: three bells at the beginning, one at the end, simply zen.</p>
+
+  <p>There's only one kind of bell. I know a lot of apps offer a ton of bells and customization options, and at first I liked that too, but I always end up using just one anyway, and choosing gets tiring. I found the bells on Pixabay, made by <a href="https://www.floraphonic.com" target="_blank" rel="noopener">Floraphonic</a>. They provide excellent foley work in their store; check it.</p>
+
+  <p>After several hours of testing the web app, I decided to drop the idea of a Progressive Web App/desktop combo. Why? For one, cloud sync is a huge next step, and even though I have help, I wanted to stay reasonable and keep my ambitions in check. And honestly, I'd never turn on a PC to meditate; it's always the phone.</p>
+
+  <p>But that got me thinking... what if I... made an app?</p>
+
+  <h2>Enter Studio</h2>
+
+  <p>I'd already installed Android Studio a long time ago, but I needed to go back to the beginning and catch up on everything. I asked the LLM to walk me through it. No automatic shit: give me the tutorial and the why. After wrapping the app and fixing a few folder mistakes, I had trouble connecting my phone (Pixel 8 Pro, my testing device) to the PC.</p>
+
+  <p>Luckily, since the last time I tried this and failed miserably, they'd introduced wireless debugging, so running the app was a breeze. After a few tests, I found bugs in the export feature and fixed them.</p>
+
+  <p>After that, I fired up Photoshop and did this icon you see here. Nothing special, but this is also the most zen thing to say, respect to the sister Charlotte Joko Beck, rest in peace. Like I said, my wife is a designer, and I'll let her design a proper logo and icon on her own time. My design thought was: a Z for Za Zen inside the ensō, positioned slightly like a horseshoe holding onto the luck. Could probably be done better by someone who actually knows what they're doing.</p>
+
+  <p>After a few short tests, I generated the signing keystore and built the first signed bundle, after saving my app password by writing it down on a piece of paper. Yup, first time I've ever done that :D</p>
+
+  <p>So why only Android and not iOS? Truthfully, as I understand it, Apple charges 99 bucks a year for App Store access, and that's certainly not something I'm willing to pay for a free app. The 25 bucks one-time fee for a Google dev account is completely fine. So I paid, named the account dukkhat (more on that name later), and then got fucked over hard trying to verify my account. Bosnian documents don't have an address on them, and luckily, only one utility bill had my name and address on it, so I scanned that, sent it in, and got verified.</p>
+
+  <p>The uploading process to the Google Play Console was really hard. There are several layers of testing (I'm currently in closed testing), and I didn't understand any of it going in, so it took a few hours of reading just to understand what I was actually doing (I did get one thing wrong). Pushed the app, and it went live for 1 person out of the 12 who'd accepted my testing invite. All of a sudden, everyone rocks a fucking iPhone…</p>
+
+  <p>Anyway, fun times. Let's see where the next day takes me.</p>
+
+  <h2>Random thoughts while building:</h2>
+
+  <ul>
+    <li>it would be great to be the first app with as much achievements as Cookie Clicker has</li>
+    <li>only google can make its product so cleanly designed and so confusing</li>
+    <li>i am sad for not taking screenshots of the earliest "design" I did</li>
+    <li>maybe cloud thing isn't about syncing but about backing the data? I should probably find the right, easy to integrate solution</li>
+    <li>i went running after uploading to Console and an excellent idea appeared before my eyes</li>
+  </ul>
+
+  <h2>What now?</h2>
+
+  <ul>
+    <li>gotta do some testing now</li>
+  </ul>
+</main>
+</body>
+</html>
