@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Bug In A Clock · ZA ZEN Dev Diary</title>
+<style>
+  :root{
+    --bg:#fafaf9; --surface:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --accent:#4f7a56; --border:#e5e5e0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text); display:flex; justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:32px 16px 80px;
+  }
+  main{max-width:640px; width:100%;}
+  .back{display:inline-block; font-size:13px; color:var(--accent); font-weight:600; text-decoration:none; margin-bottom:24px;}
+  .entry-date{font-size:12px; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; font-weight:600;}
+  .entry-title{font-size:22px; font-weight:700; margin:6px 0 24px;}
+  h2{font-size:17px; font-weight:700; margin:32px 0 12px;}
+  h3{font-size:15px; font-weight:700; margin:24px 0 10px;}
+  p{font-size:14px; color:var(--text); margin:0 0 14px;}
+  ul{margin:0 0 14px; padding-left:20px;}
+  li{font-size:14px; color:var(--text); margin-bottom:6px;}
+  a{color:var(--accent);}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../index.html">← Back to diary</a>
+  <div class="entry-date">September 12, 2026</div>
+  <div class="entry-title">A Bug In A Clock</div>
+
+  <h2>v1.4.0</h2>
+
+  <p>TL;DR aka I'm a lazy fuck who hates a good story, and I only want to know what was done:</p>
+
+  <ul>
+    <li>actually tested 1.0.0 this time before throwing it at testers</li>
+    <li>added click-to-dim-screen option</li>
+    <li>fixed bell rings problem, now working on locked phones too</li>
+    <li>added a quiet persistent notification, because apparently that's how Android decides to trust an app</li>
+    <li>added a battery-optimization toggle so aggressive phone brands stop murdering the app mid-sit</li>
+    <li>bundled all the permission requests into one splash screen instead of three separate nags</li>
+  </ul>
+
+  <p>Before I continue with today's dev diary, I want to clarify something because I didn't in the first entry: I talked about how I'm a member of the Treeleaf forum, mentioned the sangha and so on, but it would be great to mention that this project is my personal passion project and is in no way endorsed, sponsored, backed, or recommended by Treeleaf Zendo and Jundo Cohen. Just to keep the good folks out of this creative mess I'm working on.</p>
+
+  <p>After 1.0.0 went live on Google Play, I went in to do some real testing, like hardcore testing, trying to break the app. The first lesson I learned from this is to be hygienic from now on in all the other projects I eventually commit to: I'll test first, then upload to the whole world of 12 testers to see.</p>
+
+  <p>Which brings us to today's episode of 1.4.0, submitted for review in the Google Play Console. A sharp-eyed reader may ask: what about 1.2.0 or 1.3.0? Well, guess what? I did the testing! And those versions were shit, with problems which I'm about to discuss here.</p>
+
+  <p>My first problem with 1.0.0 is that I didn't want the screen light to be constantly on. I added a click-to-dim-screen mechanism which kinda works now. Kinda, because it dims the screen, but a grey bar is left over that stays no matter what. Dim does a nice job of hiding Android's top and bottom bars, but the grey bar remains, even when I rotate the phone into landscape mode.</p>
+
+  <p>If you just tried to reproduce that bug and see what such a miserable failure of a dev I am, I disabled screen rotation. I promise I'll get back to fixing this problem once that goes higher on my priority list.</p>
+
+  <h2>For fuck sake, this clock thing</h2>
+
+  <p>I know time is relative, but if you're meditating with an app you set to any amount of time, and the finishing bell doesn't sound, we do have a problem. And that problem is also stopping Za Zen from being an efficient kitchen timer, as one tester is actually using it for that.</p>
+
+  <p>Android has something called Doze mode, and it's a notorious nemesis of all the meditation apps. I'll explain this in wrestling terms. Doze mode applies a Stone Cold hard sleeper hold on the app, in this case, on the finishing bell, inside the steel cage, which is a metaphor for a locked phone. So the ending bell doesn't ring on time; it rings when the user unlocks the phone, aka exits the cage.</p>
+
+  <p>My first fix was the so-called wake lock, trying to reverse the sleeper hold. It fixed the problem when the screen was dimmed. However, the bell was still late. It went on and on, human vs. machine in a match where the human works with the machine, and then I asked, not so nicely, to put on a fucking sort of debug generator, so I could generate a report a robot can pick into and see what's going on under the hood.</p>
+
+  <p>Then we did a few hours of testing and wrote down the results.</p>
+
+  <ul>
+    <li>20 minutes, dimmed screen</li>
+    <li>30 minutes, locked screen</li>
+    <li>35 minutes, locked screen</li>
+    <li>60 minutes, dimmed screen</li>
+    <li>60 minutes, locked screen</li>
+  </ul>
+
+  <p>You get the gist. This testing actually wasn't used for meditation time, unfortunately, because I am easily getting hooked on World of Warcraft Classic, which I never played, so I'm murdering down zombies and beasts in a windowed mode while the app does the ticking-away thing.</p>
+
+  <p>What I have learned about my own work, after exporting a few debug logs, is that there isn't just one clock, but two, happily racing to see who will create more problems for me. There's an internal app clock (with a wake lock), and there's the grand generale Android clock, throttling the app's own.</p>
+
+  <p>I handed the job to the phone's built-in alarm system, the one that is used for the actual Clock app in Android, to do the work. The result was a sneaky little fucking bug that got on my nerves; I heard only one finishing bell, but the debug said there were two, because one of them was kinda "melting" into another.</p>
+
+  <p>So some more work, and the true fix was introduced. Then I did a new series of tests with locked-phone meditations set to different timers. 3, 17, 29, 46 minutes, all random, on a locked phone.</p>
+
+  <p>As the first three bells to start zazen sounded, I started the timer on my Garmin watch to make sure the finishing bell is on time and working. And yes, it's done: verified against the Garmin stopwatch, the finishing bell rings exactly once, exactly on time, and the phone stayed locked the entire sit.</p>
+
+  <h3>Not going against the grain</h3>
+
+  <p>After some cleanup work, I removed the debug thingie from settings, and it occurred to me that while this whole thing works, I really don't want to be that dude who says, "it works on my machine."</p>
+
+  <p>My goal was to create an app that is as notifications-and-permissions-free as possible. After all the work so far, I realized not all notifications and permissions are bad; some are needed because that's the life of a low-skilled developer working on a niche app in a system and setting he chose to create in.</p>
+
+  <p>So I installed around 10 popular meditation apps, took a pen and paper, and went through the apps' permission screens.</p>
+
+  <p>Almost all of them have a persistent quiet notification during a session. I wanted to escape the notification hell, but then I learned that this notification is actually technically very useful. It signals a foreground service, your direct instruction to the Android system to trust an app and keep it alive.</p>
+
+  <p>The other thing I noticed is that almost all of them have battery optimization. This is due to some really aggressive battery managers by some brands (I'm looking at you, Xiaomi, you've fucked up so many scrobbles by disabling my Pano Scrobbler), and that is something that I wanted to avoid.</p>
+
+  <p>I added a persistent notification (only one) that starts when you're meditating and disappears when you save your session. I added a battery optimization toggle and a precise alarm toggle (to make the timer work precisely) to a new splash screen that appears once you start the app. If you click Continue without agreeing to these permissions, I can't guarantee the app will work as intended. Instead of shunning the disbeliever, I'm giving you a second chance and inviting you to Settings to give permissions. Once you give permission in Settings, those cards are gone to keep the app clutter-free.</p>
+
+  <p>The new build 1.4.0 was submitted to the Console. It is now live for everyone in closed testing, so if you want to join in, please let me know; email <a href="mailto:zazenapp@proton.me">zazenapp@proton.me</a> with your Gmail account so I can add you. It's free, and you're not submitting your soul to the horned, red-skinned dude.</p>
+
+  <h2>What now?</h2>
+
+  <ul>
+    <li>Figured out I've been testing this thing on a phone with airplane mode, so I never actually had a need for Do Not Disturb. I need to add Modes access so people aren't disturbed while meditating.</li>
+    <li>I need to fix a splash screen bug: when you click Enable on Battery Optimization and Notifications, the button doesn't change to Granted, as it does with Precise Alarms, although these are enabled. My guess is that because it doesn't actually open a Settings screen, something under the hood doesn't trigger the change.</li>
+    <li>Thinking of making an actual roadmap to see what I want to add, and especially what I don't want to. One of the things on it, a huge project on its own, is an actual UI overhaul; I have a wild idea to draw the elements myself. We'll see.</li>
+  </ul>
+</main>
+</body>
+</html>
