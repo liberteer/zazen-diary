@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Za Zen Goes Public · ZA ZEN Dev Diary</title>
+<style>
+  :root{
+    --bg:#fafaf9; --surface:#ffffff; --text:#1f2937; --muted:#6b7280;
+    --accent:#4f7a56; --border:#e5e5e0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text); display:flex; justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:32px 16px 80px;
+  }
+  main{max-width:640px; width:100%;}
+  .back{display:inline-block; font-size:13px; color:var(--accent); font-weight:600; text-decoration:none; margin-bottom:24px;}
+  .entry-date{font-size:12px; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; font-weight:600;}
+  .entry-title{font-size:22px; font-weight:700; margin:6px 0 24px;}
+  h2{font-size:17px; font-weight:700; margin:32px 0 12px;}
+  h3{font-size:15px; font-weight:700; margin:24px 0 10px;}
+  p{font-size:14px; color:var(--text); margin:0 0 14px;}
+  ul{margin:0 0 14px; padding-left:20px;}
+  li{font-size:14px; color:var(--text); margin-bottom:6px;}
+  a{color:var(--accent);}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../index.html">← Back to diary</a>
+  <div class="entry-date">October 14, 2026</div>
+  <div class="entry-title">Za Zen Goes Public</div>
+
+  <p>TL;DR aka I'm a lazy fuck who hates a good story, and I only want to know what was done:</p>
+
+  <ul>
+    <li>fixed the permission rows not flipping to "granted", even when you granted them</li>
+    <li>added a Do Not Disturb toggle, and fixed the bug that came after</li>
+    <li>Android was backing up the app's data to Google behind my back, which made my privacy policy a lie, so backup is off now and I tested it on several phones</li>
+    <li>finally published on google play</li>
+    <li>quit Insight Timer after almost 10 years, so now I have to live in my own app</li>
+  </ul>
+
+  <p><a href="https://play.google.com/store/apps/details?id=com.zazen.app">On October 7, without much fanfare, Za Zen was published on Google Play</a>. Several changes have happened since the last blog post, which covered v1.4.0. That one was decent enough; you could see the app shaping up, but extensive testing revealed many bugs I couldn’t ship with it.</p>
+
+  <p>This post sums up everything we achieved from 1.4.0 to the version currently available on Google Play.</p>
+
+  <p>After I published 1.4.0 to the closed testing group that evening, I fiddled with cache and data, deleting it several times to see how different app features react to a clean slate. I found one, let’s call it an aesthetic bug: although permissions were granted when you clicked them on the splash screen on first launch, the notifications and battery permission rows never flipped to “Granted”.</p>
+
+  <p>Fixed that, but didn’t ship until 1.5.0, which was quite literally the big update. First, I switched my computers, so development had stalled for a few days. This has also taught me a lot about saving stuff in the right place and starting from scratch on the new PC. This one is much more powerful, but I had several problems while configuring it for work. After I finished setting up the PC, I reinstalled the new apps, the whole Za Zen toolchain, and re-paired my phone in Android Studio.</p>
+
+  <p>There was a JDK mismatch, so I needed additional setup in Android Studio, after which I built something I never knew I needed because I was testing the app on Airplane mode the whole time, the Do Not Disturb toggle.</p>
+
+  <h2>DO NOT DISTURB - GOOD</h2>
+
+  <p>DND toggle that can be flipped on and off is very important.</p>
+
+  <p>First, it is another permission I had to build for it to work, because when it’s on, the user allows the app to quiet the phone, including calls and notifications, during meditation. The magic is in the filter that lets sounds play (like meditation bells), and after the meditation ends, it reverts to the same ol’ very loud, very obnoxious, annoying state phones are in today.</p>
+
+  <p>For this to work, the app needed an under-the-hood change. To the user, all the bells are the same; to the app, the starting bells are media sounds, while the last, finishing bell is the alarm sound, which lets the bell sound through DND.</p>
+
+  <p>This created another problem we discovered during testing: because Android has separate volume controls for media and alarms, the starting and finishing bells have different volumes.</p>
+
+  <p>The Do Not Disturb toggle could be switched on before you had granted its permission. It's now greyed out until you do.</p>
+
+  <p>The battery row on the first screen sometimes stayed stuck on "not granted". The app now keeps rechecking for a few seconds.</p>
+
+  <p>The ending bell was louder or quieter than the three opening bells, because Android keeps alarm and media volume separate. The following trick fixed that: if the media bell (first) is quieter than the finishing bell, the app reads the state of the alarm slider and turns it down to the media volume slider level. Once the bell is triggered, the app pushes the alarm volume slider to its previous state. You can actually watch it happen; the sliders move like those on a digital mixing board once you load the settings. Super cool.</p>
+
+  <p>I found two more bugs related to the splash screen and permissions, and fixed them. A mild annoyance, nothing that was breaking the app.</p>
+
+  <h2>I LIED TO MY USERS</h2>
+
+  <p>After I published 1.5.1 to closed testing, I uninstalled the app from all my phones and installed the new version.</p>
+
+  <p>Then, something very odd happened. After reinstalling, I realized the permissions screen didn't appear. And it should, because it was a clean new install.</p>
+
+  <p>After I did some digging, I realized I lied to my users. Unbeknownst to me, Android was silently backing up the app's data to Google and restoring it on reinstall. This contradicted what I said in the privacy policy about “data staying on the device,” and I truly apologize.</p>
+
+  <p>I made sure any data backup is off, no more sneaky surprises, and I confirmed it was fixed by uninstalling and reinstalling several times on several devices, including a Pixel phone. The publicly available Google Play version doesn’t do backing up of any kind on its own; you can only create the backup yourself.</p>
+
+  <h2>HOUSEKEEPING IS IMPORTANT</h2>
+
+  <p>Before publishing, I sat down with my notes and went through the log. Then I did some housekeeping.</p>
+
+  <p>I am keeping the Onboarding document for Za Zen, which is basically the bible for everything that was done with the app. It is a written instruction manual that should help someone who didn’t work on it continue, hopefully without needing any of my help.</p>
+
+  <p>It also includes a possible roadmap of everything I wanted to integrate at some point. I have a lot of ideas, some pretty wild, but a great blocking mechanism helps me come to my senses: I read what I want to solve with this app and who it is for.</p>
+
+  <p>That is why most of my ideas will probably never see the light of day. I came here to solve the problem of the bloated Insight Timer; it would be silly to become another Insight Timer.</p>
+
+  <p>Two ideas are parked for now but could come back later: translations and an F-Droid version.</p>
+
+  <p>I would really like to do translations, and my first idea was to make the app bilingual, English for international audiences and Bosnian/Croatian/Serbian (one language, be mad about it as much as you want) for the local audience. I gave up on this because I don’t have time to work through string translations.</p>
+
+  <p>Language matters to me, and I don’t want to use machine translation. Maybe I’ll set up a fan translation and see if I can do it that way. It is not a top priority right now.</p>
+
+  <p>The other thing is the F-Droid version. A de-Googled option of the app should exist, but as far as I can tell right now, you need to open-source the app, recompile it, and so on. No problem with that; I need more time to learn about it. So that’s a mild priority for me at this moment, but low in terms of everything else that I have on my plate besides Za Zen.</p>
+
+  <h2>WHERE TO NOW?</h2>
+
+  <p>Today I said goodbye to my Insight Timer account after almost 10 years. It was a good run, and I am thankful to the Insight Timer team for creating the product that helped me start meditating. I don’t encourage anyone who uses Insight Timer and Za Zen to do the same; maybe delete Insight Timer from your phone for now and see how Za Zen works for you.</p>
+
+  <p>I needed to get drastic about this; since Za Zen is available on Google Play, I need to use it daily and abuse it in testing environments to make sure it does its job. Za Zen is still released to the world as-is, but I don’t want to follow the dreaded “it works on my phone” philosophy.</p>
+
+  <p>I will work on it, and I invite you to download it, try it, and send me your feedback at zazenapp[AT]proton.me; send me the bugs you encounter, features, anything you think I need to know.</p>
+
+  <p>After all, we’re on the same cushion here.</p>
+
+  <h3>What now?</h3>
+
+  <ul>
+    <li>Can’t really share anything because whenever I say something publicly, I feel like I swore an oath. I need to sit down (pun intended) with myself and figure out what is doable right now. I will probably make a small website or a section on my blog to promote Za Zen, because in the meantime I created something new that HELPS a lot during my workdays, and I will want to share that with everyone too.</li>
+  </ul>
+</main>
+</body>
+</html>
